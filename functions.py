@@ -34,3 +34,67 @@ def get_activity(user: str) -> list[dict]:
         print(f"Error: {e}")
 
     return []
+
+
+def parse_events(events: list[dict]) -> list[str]:
+
+    events_list = []
+    if not events:
+        raise ValueError(
+            "The object given as events is empty."
+        )
+    
+    try:
+        
+        for event in events:
+            user = event["actor"]["login"]
+            repo = event["repo"]["name"]
+            
+            match event["type"]:
+
+                case "CreateEvent":
+                    ref_type = event["payload"]["ref_type"]
+                    if ref_type == "repository":
+                        events_list.append(
+                            f"- {user} created a repository: {repo}."
+                        )
+                
+                    else:
+                        events_list.append(
+                            f"- {user} created a {ref_type} in {repo}."
+                        )
+
+                case "PushEvent":
+                    events_list.append(
+                        f"- {user} pushed {len(event["payload"]["commits"])} commits to {repo}."
+                    ) 
+
+                case "DeleteEvent":
+                    events_list.append(
+                        f"- {user} deleted a {event["payload"]["ref_type"]} in {repo}"
+                    )   
+
+                case "IssueEvent":
+                    events_list.append(
+                        f"- {user} {event["payload"]["action"]} an issue in {repo}"
+                    )
+
+                case "IssueCommentEvent":
+                    events_list.append(
+                        f"- {user} {event["payload"]["action"]} an issue comment in {repo}."
+                    )
+
+                case "ReleaseEvent":
+                    events_list.append(
+                        f"- {user} {event["payload"]["action"]} tag in {repo}."
+                    )
+
+                case _:
+                    events_list.append(
+                        f"- {event["type"]} in {repo}."
+                    )
+        
+    except KeyError:
+        print(f"Something is wrong with {events}.")
+
+    return events_list
