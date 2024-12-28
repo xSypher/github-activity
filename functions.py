@@ -27,7 +27,7 @@ def get_activity(user: str) -> list[dict]:
     except requests.exceptions.ConnectionError:
         print("Error: connection error.")
     
-    except requests.exceptions.HTTPError as e:
+    except requests.exceptions.HTTPError:
         print(f"invalid user: {user}")
     
     except requests.exceptions.RequestException as e:
@@ -56,37 +56,37 @@ def parse_events(events: list[dict]) -> list[str]:
                     ref_type = event["payload"]["ref_type"]
                     if ref_type == "repository":
                         events_list.append(
-                            f"- {user} created a repository: {repo}."
+                            f"- created a repository: {repo}."
                         )
                 
                     else:
                         events_list.append(
-                            f"- {user} created a {ref_type} in {repo}."
+                            f"- created a {ref_type} in {repo}."
                         )
 
                 case "PushEvent":
                     events_list.append(
-                        f"- {user} pushed {len(event["payload"]["commits"])} commits to {repo}."
+                        f"- pushed {len(event["payload"]["commits"])} commits to {repo}."
                     ) 
 
                 case "DeleteEvent":
                     events_list.append(
-                        f"- {user} deleted a {event["payload"]["ref_type"]} in {repo}"
+                        f"- deleted a {event["payload"]["ref_type"]} in {repo}"
                     )   
 
-                case "IssueEvent":
+                case "IssuesEvent":
                     events_list.append(
-                        f"- {user} {event["payload"]["action"]} an issue in {repo}"
+                        f"- {event["payload"]["action"]} an issue in {repo}"
                     )
 
                 case "IssueCommentEvent":
                     events_list.append(
-                        f"- {user} {event["payload"]["action"]} an issue comment in {repo}."
+                        f"- {event["payload"]["action"]} an issue comment in {repo}."
                     )
 
                 case "ReleaseEvent":
                     events_list.append(
-                        f"- {user} {event["payload"]["action"]} tag in {repo}."
+                        f"- {event["payload"]["action"]} tag in {repo}."
                     )
 
                 case _:
