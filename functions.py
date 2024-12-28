@@ -98,3 +98,20 @@ def parse_events(events: list[dict]) -> list[str]:
         print(f"Something is wrong with {events}.")
 
     return events_list
+
+
+def print_events(events: list[str]) -> None:
+    
+    if not isinstance(events, list):
+        object_type = str(type(events)).split()[1].strip(">'")
+        raise TypeError(
+            f"argument should be of type 'list'. a {object_type} was given."
+        )
+
+    
+    if events:
+        for event in events:
+            print(event)
+
+    else:
+        print("The list is empty.")
